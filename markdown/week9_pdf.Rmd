@@ -1,0 +1,47 @@
+---
+title: "Week9_notebook"
+author: "Jiayin Qu"
+date: "3/21/2020"
+output:
+  pdf_document: default
+---
+
+#Library Imports
+```{r results = "hide", message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(psych)
+library(ggplot2)
+library(lubridate)
+library(rmarkdown)
+```
+
+#Data Import
+- data import
+```{r}
+week8_tbl <- read_csv("../data/week3.csv") 
+```
+- type coercion: date
+```{r}
+week8_tbl <- week8_tbl %>%
+  mutate(timeStart = ymd_hms(timeStart), timeEnd = ymd_hms(timeEnd))
+```
+
+
+#Visualization
+```{r, echo = FALSE}
+ggplot(week8_tbl, aes(rowMeans(week8_tbl[,paste0("q", 1:5)]), rowMeans(week8_tbl[,paste0("q", 6:10)]))) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(x = "mean score of Q1 - Q5", y = "mean score of Q6 - Q10")
+```
+The plot has mean scores of Q1 - Q5 on x-axis and mean scores of Q6 - Q10 on y-axis, with an OLS regression line. 
+
+#Analysis
+```{r}
+corData <- cor.test(rowMeans(week8_tbl[,paste0("q", 1:5)]), rowMeans(week8_tbl[,paste0("q", 6:10)]), method = "pearson")
+(corData$estimate)
+(corData$p.value)
+```
+
+The correlation was `r corData$estimate` `r ifelse(corData$p.value >= .05, "(p>=.05)", "(p<.05")`,  which is `r ifelse(corData$p.value >= .05, "not", "")` statistically significant. 

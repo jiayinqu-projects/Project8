@@ -1,0 +1,44 @@
+---
+title: "Week9_notebook"
+author: "Jiayin Qu"
+date: "3/21/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+#R Studio API Code
+```{r setup, include=FALSE}
+library(rstudioapi)
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+```
+
+# Library Imports
+```{r}
+library(tidyverse)
+library(psych)
+library(ggplots2)
+```
+
+#Data Import
+```{r}
+week8_tbl <- read_csv("../data/week3.csv") %>%
+  mutate(timeStart = ymd_hms(timeStart), timeEnd = ymd_hms(timeEnd))
+```
+
+#Visualization
+```{r}
+ggplot(week8_tbl, aes(rowMeans(week8_tbl[,paste0("q", 1:5)]), rowMeans(week8_tbl[,paste0("q", 6:10)]))) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  labs(x = "mean score of Q1 - Q5", y = "mean score of Q6 - Q10")
+```
+
+
+#Analysis
+```{r}
+corData <- cor.test(rowMeans(week8_tbl[,paste0("q", 1:5)]), rowMeans(week8_tbl[,paste0("q", 6:10)]), method = "pearson")
+(corData$estimate)
+(corData$p.value)
+```
+
